@@ -70,5 +70,69 @@ const getNoteByIdHandler = (request, h) => {
     return response;
 };
 
+
+// edit
+const editNoteByIdHandler = (request, h) => {
+    const {id} = request.params;
+
+    const {title, tags, body} = request.payload
+    const updatedAt = new Date().toISOString();
+
+    const index = notes.findIndex((note) => note.id === id);
+
+    if (index !== -1) {
+        notes[index] = {
+            ...notes[index],
+            title,
+            tags,
+            body,
+            updatedAt,
+        };
+
+        const response = h.response({
+            status : 'success',
+            message : 'catatan berhasil diperbarui',
+        });
+        response.code(200);
+        return response;
+    }
+
+    const response = h.response({
+        status : 'fail',
+        message : 'Gagal memperbarui catatan. Id tidak ditemukan',
+    });
+    response.code(404);
+    return response;
+};
+
+const deleteNodeByIdHandler = (response, h) => {
+    const {id} = request.params;
+
+    const index = notes.findIndex((note) => note.id === id);
+
+    if (index !== -1){
+        notes.splice(index, 1);
+        const response = h.response ({
+            status : 'success',
+            message : 'catatan berhasil dihapus'
+        });
+        response.code(200);
+        return response;
+    }
+
+    const response = h.response ({
+        status : 'fail',
+        message : 'catatan gagal dihapus. Id tidak ditemukan'
+    });
+    response.code(404);
+    return response;
+};
+
 // mengekspor dengan cara object literals
-module.exports = {addNoteHandler, getAllNotesHandler, getNoteByIdHandler};
+module.exports = {
+    addNoteHandler, 
+    getAllNotesHandler, 
+    getNoteByIdHandler,
+    editNoteByIdHandler,
+    deleteNodeByIdHandler
+};
